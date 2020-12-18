@@ -1,0 +1,250 @@
+{
+  "name"    : "${Name}",
+
+  "include" :
+  [
+    {"path" : "$${QOOXDOO_PATH}/tool/data/config/application.json"},
+    {"path" : "etc/libraries.json"},
+    {"path" : "etc/enviroment.json"},
+    {"path" : "etc/bootload.json"},
+    {"path" : "etc/persistence.json"},
+    {"path" : "etc/chrome.json"},
+    {"path" : "etc/parts.json"},
+    {
+      "path" : "$${QOOXDOO_PATH}/../../lib/inspector/inspector.json",
+      "as"   : "inspector"
+    },
+    {
+      "path" : "$${QOOXDOO_PATH}/../../lib/testrunner/testrunner.json",
+      "as"   : "testrunner-opt"
+    }
+  ],
+
+  "export" :
+  [
+    "api",
+    //"api-data",
+    "build",
+    "clean",
+    "distclean",
+    //"dependencies",
+    "fix",
+    "info",
+    "lint",
+    //"migration",
+    "pretty",
+    "profiling",
+    "source",
+    //"source-all",
+    //"source-hybrid",
+    //"source-server",
+    //"source-server-reload",
+    //"source-httpd-config",
+    //"test",
+    "test-source",
+    "translation",
+    "validate-config",
+    "validate-manifest",
+    //"watch",
+    //JOBS DE CRIAX
+    "generate",
+    "update",
+    "prebuild",
+    "package",
+    "beauty",
+    "translation",
+    "white-space",
+    "inspector",
+    "test-cli",
+    "clean-all",
+    "validate"
+  ],
+
+  "default-job" : "update",
+
+  "let" :
+  {
+    "APPLICATION"  : "${Namespace}",
+    "QOOXDOO_PATH" : "${REL_QOOXDOO_PATH}",
+    "QXTHEME"      : "${Namespace}.theme.Theme",
+    "API_EXCLUDE"  : ["$${APPLICATION}.theme.*", "$${APPLICATION}.test.*", "qx.*", "$${APPLICATION}.simulation.*", "criax.*", "cormx.*", "accordion.*", "collapsablepanel.*", "combotable.*", "dialog.*", "logpane.*", "mutablelist.*", "tokenfield.*", "versionlabel.*"],
+    "LOCALES"      : [ "en" ],
+    "CACHE"        : "./var/cache",
+    "ROOT"         : ".",
+    "ENGINE"       : "gecko"
+  },
+
+  // You only need to edit the remainder of this file, if you want to customize
+  // specific jobs, or add own job definitions.
+
+  "jobs" :
+  {
+    "generate" :
+    {
+      "desc"   : "generate the application, only for the first time",
+      "extend" : ["inc_lib","env","bootload","persistence","chrome"],
+      "run" : ["source"],
+      "compile-options" : {"code" : {"optimize" : []}},
+      "environment" : {"engine.name" : ["$${ENGINE}"]}
+    },
+
+    "update" :
+    {
+      "desc"   : "compile and update the application",
+      "extend" : ["inc_lib","env","bootload","persistence","chrome"],
+      "run" : ["validate-config","translation","white-space","beauty","lint","source-parts"],
+      "compile-options" : {"code" : {"optimize" : []}},
+      "environment" : {"engine.name" : ["$${ENGINE}"]}
+    },
+
+    "prebuild" :
+    {
+      "desc"   : "create a prebuild version of the application",
+      "extend" : ["inc_lib","env","bootload","persistence","chrome"],
+      "run" : ["validate-manifest","validate-config","translation","white-space","beauty","lint","build-parts"],
+      "compile-options" : {"code" : {"optimize" : []}},
+      "environment" : {"engine.name" : ["$${ENGINE}"]}
+    },
+
+    "package" :
+    {
+      "desc"   : "create a distribuible version of the application",
+      "extend" : ["inc_lib","env","bootload","persistence","chrome"],
+      "run" : ["validate-manifest","validate-config","translation","white-space","beauty","lint","build-parts"],
+      "environment" : {"engine.name" : ["$${ENGINE}"]}
+    },
+
+    "beauty" :
+    {
+      "desc"   : "beauty-formatting of the source code of the current library, (include pretty-formatting)",
+      "extend" : ["pretty"],
+      "pretty-print" :
+      {
+        "general" : {"indent-string" : "    "},
+        "comments" :
+        {
+          "block" : {"add" : "true"},
+          "trailing" :
+          {
+            "keep-column" : "false",
+            "comment-cols" : ["50", "70", "90"],
+            "padding" : " "
+          }
+        },
+        "code" :
+        {
+          "align-with-curlies" : false,
+          "open-curly" :
+          {
+            "newline-before" : "a",
+            "indent-before" : false
+          }
+        }
+      }
+    },
+
+    "white-space" :
+    {
+      "desc"   : "formatting whitespace in .js files of the current library, (include fix)",
+      "extend" : ["fix"],
+      "fix-files" :
+      {
+        "eol-style" : "LF",
+        "tab-width" : 4
+      }
+    },
+    
+    "clean-all" : 
+    {
+      "desc" : "clean and destclean all",
+      "run"  : ["clean","distclean"],
+    },
+    
+    "validate" : 
+    {
+      "desc" : "vaidate libraries and Manifests",
+      "run"  : ["validate-config","validate-manifest"],
+    },
+    
+    "inspector":
+    {
+      "desc"   : "create an inspector instance in the current library",
+
+      "extend" : ["inspector::build"],
+
+      "let"    :
+      {
+        "INSPECTOR_ROOT" : "$${QOOXDOO_PATH}/../../lib/inspector",
+        "INSPECTOR_PATH"    : "$${ROOT}/inspector"
+      },
+
+      "environment" :
+      {
+        "inspector.selenium.extensions" : "../inspector/script/user-extensions.js"
+      },
+
+      "=run" : ["inspector-resources", "inspector-script", "inspector-files", "inspector::build-files-simulator"]
+    },
+
+
+    "inspector-resources":
+    {
+      "extend"  : ["inspector::build-resources"],
+
+      "copy-files" : // piggy-packing another files copy job onto this one
+      {
+        "files"  :
+        [
+          "index.html"
+        ],
+
+        "target" : "$${INSPECTOR_PATH}",
+        "source" : "$${INSPECTOR_ROOT}/source/resource/inspector/html"
+      }
+    },
+
+    "inspector-script":
+    {
+      "extend"  : ["inspector::build-script"],
+
+      "compile-options":
+      {
+        "uris" :
+        {
+          "resource" : "../inspector/resource",
+          "script"   : "../inspector/script"
+        }
+      }
+    },
+
+    "inspector-files":
+    {
+      "extend" : ["inspector::build-files"],
+
+      "copy-files" :
+      {
+        "=files" :
+        [
+          "inspector.html"
+        ],
+
+        "target" : "$${ROOT}/source"
+      }
+    },
+    
+    "test-cli" :
+    {
+      "desc" : "create a basic (server-side/headless) test runner app for unit tests (source version) of the current library",
+
+      "extend" : ["testrunner-opt::source-basic"],
+      
+      "let" :
+      {
+        "TESTRUNNER_ROOT" : "$${QOOXDOO_PATH}/../../lib/testrunner",
+        "TEST_INCLUDE"    : "$${APPLICATION}.test.*",
+        "BUILD_PATH"      : "$${ROOT}/test",
+        "TESTRUNNER_MAIN_CLASS" : "testrunner.ApplicationCli"
+      }
+    }
+  }
+}

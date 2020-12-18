@@ -1,0 +1,24 @@
+- falta el test de ipv6
+- falta el test de ip
+- modificar el resto de los constrains (?)
+- crear constrains contra BD, para ello dependo del componente cormx
+- crear constrains de Ip general donde se pueda pasar la version y validate. Para la validacion de la version 6 fijarme en Sf
+- Traducir los mensajes de error de los constrains
+- crear constrains donde la combinacion de atributos de una entidad sean unicos, o sea donde la entidad sea unica
+- dar la posibilidad de pasar el json construido para la validacion de entidades desde el codigo. Normalmente se hace en un archivo aparte. Ver del componente validator, ValidatorTest. Usar esta idea tambien para el mapeo de BD y entidades.
+- crear constrain Uuid
+- crear constrain UniqueEntity
+- crear constrain Count, ver si no es como el Count que ya existe
+- crear constrain Bic
+- crear constrain CardSheme
+- crear constrain Currency
+- crear constrain Luhn
+- crear constrain Iban
+- crear constrain Isbn
+- crear constrain Issn
+- crear constrain All
+- validar atributos de objetos, ver si no es lo que esta hecho ya
+- instanceOf para validar que un dato es de un tipo de objeto determinado
+- fijarme en los patrones de validacion de Sf
+- Resolver el problema de los plural en los mensajes
+-* El arreglo constrainvalidation convertirlo en un arreglo de Qx

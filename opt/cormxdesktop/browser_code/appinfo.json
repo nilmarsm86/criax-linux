@@ -1,0 +1,17 @@
+{
+    "build_id": "2013020884307", 
+    "opacity": "1", 
+    "vendor": "Company", 
+    "name": "cormxdesktop", 
+    "resizable": true, 
+    "developer_email": "unknown@unknown.cu", 
+    "margins": "0px 7px 7px 0px", 
+    "module_dirs": [], 
+    "transform": "rotate(0deg) skew(0deg, 0deg)", 
+    "background_app": "gray", 
+    "version": "0.1", 
+    "borders_radius": "10px 10px 10px 10px", 
+    "hidechrome": true, 
+    "shadow": "3px 3px 5px #000", 
+    "borders": "1px solid #000"
+}

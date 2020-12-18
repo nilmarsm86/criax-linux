@@ -1,0 +1,29 @@
+{
+    "export" : ["bootload"],
+    "jobs" :
+    {
+        "bootload" :
+        {
+            "desc" : "Set the environment for bootload class",
+            
+            //INIT CLASS
+            "environment" :
+            {
+                "criax.init.controller" : "${Name}.controller.Controller",
+                "criax.init.view" : "${Name}.view.View",
+                "criax.init.domain" : "criax.domain.ModelFacade"
+            },
+
+            //AUTOLOAD
+            "use" :
+            {
+                "${Name}.Application" :
+                [
+                    "${Name}.controller.Controller",
+                    "${Name}.view.View",
+                    "criax.domain.ModelFacade"
+                ]
+            }
+        }
+    }
+}
